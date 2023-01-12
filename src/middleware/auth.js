@@ -1,15 +1,16 @@
 const jwt = require('jsonwebtoken')
-const secret = process.env.SECRET;
 
 module.exports.auth = async(request,response,next) => {
     try{
+        const secret = process.env.SECRET;
+        
         if(!request.headers.authorization)
             throw new Error('Token is required')
         
             const token = request.headers.authorization;
 
             const user = jwt.verify(token,secret)
-            console.log(user);
+            console.log("auth user ",user);
             request.user = user;
             next();
     }catch(error){

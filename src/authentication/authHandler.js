@@ -4,6 +4,7 @@ const prisma = require("../../db/prisma");
 const jwt = require("jsonwebtoken");
 const { validatePassword, hashPassword } = require("../utils/hashing");
 const { v4: uuidv4 } = require("uuid");
+const logger = require("../utils/logger");
 
 const secret = process.env.SECRET;
 const tokenExpiry = process.env.TOKEN_EXPIRY;
@@ -53,7 +54,7 @@ router.post("/login", async (request, response, next) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error.message);
     response.status(500).json({
       success: false,
       message: "Failed at auth/login",
@@ -81,7 +82,7 @@ router.post("/signup", async (request, response, next) => {
       data: user,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error.message);
     response.status(500).json({
       success: false,
       message: "Failed at auth/signup",
@@ -119,10 +120,11 @@ router.post("/refreshToken", async (request, response, next) => {
       success: true,
       message: "Successfully revoked token",
       data: {
-          accessToken:token
+        accessToken: token,
       },
     });
   } catch (error) {
+    logger.error(error.message);
     response.status(500).json({
       success: false,
       message: "Failed at auth/refreshToken",
