@@ -3,14 +3,24 @@ const router = express.Router();
 const {
   addLocation,
   getLocationByUser,
+  getLocationById,
   updateLocation,
 } = require("./functions/location");
+
+const { isOwner } = require("../middleware/role");
+
 
 router.post("/", async (request, response, next) => {
   try {
     console.log(request.body);
     const { location, userId } = request.body;
-    const locationData = await addLocation(userId, location);
+
+    const locationObj ={
+      userId:userId,
+      location:location,
+
+    }
+    const locationData = await addLocation(locationObj);
     return response.status(200).json({
       success: true,
       message: "Successfylly created location",
@@ -46,8 +56,13 @@ router.get("/", async (request, response, next) => {
 
 router.post("/update", async (request, response, next) => {
   try {
-    const { location } = request.body;
-    const updatedLocation = await updateLocation(location);
+    const { id, location } = request.body;
+    const oldLocation = await getLocationById(id);
+    console.log(oldLocation);
+    if (!isOwner(id, oldLocation))
+      throw new Error("Only Owner can update the location");
+
+    const updatedLocation = await updateLocation(id, location);
 
     return response.status(200).json({
       success: true,
