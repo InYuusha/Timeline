@@ -15,7 +15,11 @@ module.exports.auth = async(request,response,next) => {
             next();
     }catch(error){
         console.log(error)
-        throw new Error(error.message)
+        return response.status(500).json({
+            success:false,
+            message:'Failed at auth',
+            error:error.message
+        })
 
     }
 }

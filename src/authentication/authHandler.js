@@ -7,9 +7,9 @@ const { v4: uuidv4 } = require("uuid");
 const logger = require("../utils/logger");
 
 const secret = process.env.SECRET;
-const tokenExpiry = process.env.TOKEN_EXPIRY;
+const tokenExpiry = parseInt(process.env.TOKEN_EXPIRY);
 const refreshSecret = process.env.REFRESH_SECRET;
-const refreshExpiry = process.env.REFRESH_EXPIRY;
+const refreshExpiry = parseInt(process.env.REFRESH_EXPIRY);
 
 router.post("/login", async (request, response, next) => {
   try {
@@ -28,8 +28,9 @@ router.post("/login", async (request, response, next) => {
     if (!isMatch) throw new Error("Incorrect Password");
 
     const userData = {
-      userId: user.userId,
+      userId: user.id,
     };
+
     const token = jwt.sign(userData, secret, { expiresIn: tokenExpiry });
     const refreshToken = jwt.sign(userData, refreshSecret, {
       expiresIn: refreshExpiry,

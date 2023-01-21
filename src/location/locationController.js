@@ -5,7 +5,6 @@ const {
   getLocationByUser,
   updateLocation,
 } = require("./functions/location");
-const { auth } = require("../middleware/auth");
 
 router.post("/", async (request, response, next) => {
   try {
